@@ -222,14 +222,15 @@ class InvoiceReceipt(QMainWindow):
         
         self.data = []
         for (i, r) in enumerate(rows):
+            tmp = float(r[3]) * r[4]
+            tmp -= tmp * (r[5] / 100)
             self.data.append({
                 'Item Name': r[2],
                 'Price': r[3],
                 'Qty': r[4],
                 'Discount': r[5],
-                'Amount': r[3] * Decimal(r[4])
+                'Amount': tmp,
             })
-
             grid.setItem(i, 0, table_cell(str(i+1)))
             grid.setItem(i, 1, table_cell(r[2]))
             grid.setItem(i, 2, table_cell(f'{r[3]:,.2f}'))
@@ -245,7 +246,6 @@ class InvoiceReceipt(QMainWindow):
         main_layout = QVBoxLayout()
         main_layout.addLayout(hbox(['Invoice Id:', str(self.i)]))
         main_layout.addLayout(hbox(['Date:', self.info[1].strftime('%d %B %Y')]))
-        #main_layout.addLayout(hbox(['Time:', self.info[1].strftime('%I:%M %p')]))
         main_layout.addLayout(hbox(['Description:', self.info[0]]))
 
         amt = float(self.info[2])
@@ -258,7 +258,6 @@ class InvoiceReceipt(QMainWindow):
         main_layout.addLayout(hbox(['Total:', 'Rs ' + f'{total_amt:,.2f}']))
         main_layout.addWidget(icon_button('Save as PDF', 'pdf', self.save_pdf))
         main_layout.addWidget(icon_button('Go Back', 'back', self.close))
-
         widget = QWidget()
         widget.setLayout(main_layout)
         self.setCentralWidget(widget)
